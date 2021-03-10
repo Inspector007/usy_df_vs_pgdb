@@ -3,9 +3,9 @@ from sqlalchemy import create_engine
 import time
 import pandas as pd
 
-db_user = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-db_pass = urllib.parse.quote_plus("Devuser1@3")
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+db_user = urllib.parse.quote_plus("")
+db_pass = urllib.parse.quote_plus("")
+engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@', client_encoding='utf8' )
 connection = engine.raw_connection() ## # TODO connection pooling required
 cursor = connection.cursor() ## # TODO connection pooling required
 table_name = 'tbl_ibm_file_download_status'

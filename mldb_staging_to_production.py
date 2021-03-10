@@ -10,9 +10,9 @@ import json
 'CustomerName', 'CampusId', 'State','Address1', 'Address2',
 'Address3','City', 'ZipCode','InternetFacingHw', 'HostName', 'ServerType', 'MldbTags']
  """
-db_user_staging = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-db_pass_staging = urllib.parse.quote_plus("Devuser1@3")
-engine_staging = create_engine(f'postgresql+psycopg2://{db_user_staging}:{db_pass_staging}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+db_user_staging = urllib.parse.quote_plus("")
+db_pass_staging = urllib.parse.quote_plus("")
+engine_staging = create_engine(f'postgresql+psycopg2://{db_user_staging}:{db_pass_staging}@', client_encoding='utf8' )
 table_name_staging = 'tbl_ibm_mldb_staging'
 
 """tbl_it_asset_baseline Columns -->
@@ -20,9 +20,9 @@ table_name_staging = 'tbl_ibm_mldb_staging'
 'ITTags', 'BoTCommDate', 'AdhocScan', 'AssetStatus', 'AssetLocation', 'AccountNumber', 
 'AccountName', 'SupportingTags']
  """
-db_user_production = urllib.parse.quote_plus("postgres")
-db_pass_production = urllib.parse.quote_plus("portaluser@8877")
-engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atomdeployment_db?sslmode=', client_encoding='utf8' )
+db_user_production = urllib.parse.quote_plus("")
+db_pass_production = urllib.parse.quote_plus("")
+engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@?sslmode=', client_encoding='utf8' )
 table_name_production = 'tbl_it_asset_baseline'
 
 start_time_copy_expert = time.time()

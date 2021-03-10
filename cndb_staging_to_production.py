@@ -10,9 +10,9 @@ import json
 'ClientDirNumber', 'SystemType', 'CountryCode', 'Geogr
 aphyName', 'RegionName', 'IndustryName', 'SectorName', 'DpeContactEmail', 'DpeContactName']
  """
-db_user_staging = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-db_pass_staging = urllib.parse.quote_plus("Devuser1@3")
-engine_staging = create_engine(f'postgresql+psycopg2://{db_user_staging}:{db_pass_staging}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+db_user_staging = urllib.parse.quote_plus("")
+db_pass_staging = urllib.parse.quote_plus("")
+engine_staging = create_engine(f'postgresql+psycopg2://{db_user_staging}:{db_pass_staging}@/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
 table_name_staging = 'tbl_ibm_cndb_staging'
 
 """tbl_accounts Columns -->
@@ -20,9 +20,9 @@ table_name_staging = 'tbl_ibm_cndb_staging'
 'AccountStatus', 'AccountType', 'Geography', 'Country',
 'CountryCode', 'SectorName', 'IndustryName', 'DPEName', 'DPEEmailAddress', 'ServiceType', 'AccountTags']
  """
-db_user_production = urllib.parse.quote_plus("postgres")
-db_pass_production = urllib.parse.quote_plus("portaluser@8877")
-engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atomsecurity_db?sslmode=', client_encoding='utf8' )
+db_user_production = urllib.parse.quote_plus("")
+db_pass_production = urllib.parse.quote_plus("")
+engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@/ibm_atomsecurity_db?sslmode=', client_encoding='utf8' )
 table_name_production = 'tbl_accounts'
 
 start_time_copy_expert = time.time()

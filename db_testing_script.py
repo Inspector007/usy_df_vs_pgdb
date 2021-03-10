@@ -2,9 +2,9 @@ import urllib.parse
 from sqlalchemy import create_engine
 import pandas as pd
 
-# db_user_production = urllib.parse.quote_plus("postgres")
-# db_pass_production = urllib.parse.quote_plus("portaluser@8877")
-# engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+# db_user_production = urllib.parse.quote_plus("")
+# db_pass_production = urllib.parse.quote_plus("")
+# engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@?sslmode=require', client_encoding='utf8' )
 # table_name_production = 'tbl_it_asset_baseline'
 # df_data1 = pd.read_sql_table(table_name_production, con=engine_production)
 

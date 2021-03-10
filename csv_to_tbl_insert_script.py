@@ -2,9 +2,9 @@ import urllib.parse
 from sqlalchemy import create_engine
 import time
 
-# db_user = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-# db_pass = urllib.parse.quote_plus("Devuser1@3")
-# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+# db_user = urllib.parse.quote_plus("")
+# db_pass = urllib.parse.quote_plus("")
+# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@', client_encoding='utf8' )
 db_user = urllib.parse.quote_plus("postgres")
 db_pass = urllib.parse.quote_plus("pgadmin")
 engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
