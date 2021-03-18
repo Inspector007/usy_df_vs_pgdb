@@ -1,8 +1,7 @@
 import urllib.parse
 from sqlalchemy import create_engine
 import time
-import pandas as pd
-import json
+
 db_user = urllib.parse.quote_plus("postgres")
 db_pass = urllib.parse.quote_plus("pgadmin")
 engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
@@ -15,7 +14,8 @@ table_name = 'tbl_ibm_cndb_staging'
 'ClientDirNumber', 'SystemType', 'CountryCode', 'GeographyName', 
 'RegionName', 'IndustryName', 'SectorName', 'DpeContactEmail', 'DpeContactName']
 """
-df_cndb_statging = pd.read_sql_query('SELECT * FROM '+table_name+' where "UpdatedOn" IS NULL', con=engine)
+# df_cndb_statging = pd.read_sql_table(table_name, con=engine)
+# df_cndb_statging = pd.read_sql_query('SELECT * FROM '+table_name+' where "UpdatedOn" IS NULL', con=engine)
 
 UpdatedOn_list = []
 UpdatedBy_list = []
@@ -31,16 +31,20 @@ for i in range(rowcount):
     Source_list.append('CNDB_DATA')
     SystemType_list.append('SystemType')
 
-df_cndb_statging['UpdatedOn'] = UpdatedOn_list
-df_cndb_statging['UpdatedBy'] = UpdatedBy_list
-df_cndb_statging['CndbTags'] = CndbTags_list
-df_cndb_statging['Source'] = Source_list
-df_cndb_statging['SystemType'] = SystemType_list
+
+# print(''.join(newupdate_list))
 
 start_time_copy_expert = time.time()
+sql_query= ""
+for i in range(25):
+    sql_query += 'UPDATE tbl_ibm_cndb_staging set "UpdatedOn" = now(), ' \
+            '"UpdatedBy" = \'{0}\', ' \
+            '"CndbTags" = \'{1}\', ' \
+            '"Source" = \'{2}\',' \
+            '"SystemType" = \'{3}\'' \
+            'where "UpdatedOn" IS NULL;'.format(UpdatedBy_list[i],CndbTags_list[i],Source_list[i],SystemType_list[i])
 
-df_cndb_statging.to_sql(table_name, con=engine, if_exists='replace', index=False)
-
+cursor.execute(sql_query)
 conn.commit()
 cursor.close()
 conn.close()
