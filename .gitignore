@@ -1,0 +1,15 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Ignore all text files
+*.txt
+*.pyc
+*.CSV
+*.csv
+*.xls
+*.xlsx
+*.json
+*.config
+*.log
+*.cfg
+*.sql

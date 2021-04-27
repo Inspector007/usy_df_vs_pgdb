@@ -35,13 +35,15 @@ config_aic.read(cur_dir+'/'+'config.ini')
 # # print(engine)
 
 
-db_user = urllib.parse.quote_plus("")
-db_pass = urllib.parse.quote_plus("")
-## verbose - sslmode=require
-#engine = create_engine('postgresql+psycopg2://postgres:portaluser@8877@atomclient.westcentralus.cloudapp.azure.com:5432/ey_atombridge_db', client_encoding='utf8' )#, echo=True) ## Dont Echo may take more time
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-#engine_postgres = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/postgres?sslmode=require', client_encoding='utf8' )
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@', client_encoding='utf8' )
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
+
+connection, cursor = data_source_connection(active_db)
 #print(type(engine))
 #print (engine_postgres.table_names()) # []
 print (engine.table_names()) # list of Tables

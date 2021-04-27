@@ -3,22 +3,17 @@ from sqlalchemy import create_engine
 import pandas as pd
 import time
 
-### CT TEAM STAGIING DB 
-db_user = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-db_pass = urllib.parse.quote_plus("Devuser1@3")
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
 
-### DEEPAK LAPTOP DB 
-# db_user = urllib.parse.quote_plus("postgres")
-# db_pass = urllib.parse.quote_plus("pgadmin")
-# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
-
-connection = engine.raw_connection() #TODO connection pooling required
-cursor = connection.cursor() #TODO connection pooling required
-
+connection, cursor = data_source_connection(active_db)
 #HW_Baseline_MLDB_20220303.xlsx #TODO CHange to xlsx and code again with 
-# csv_file = '/home/vcenteruser/ibm_new/sprint3/a_csv/'
+# csv_file = '/home/vcenteruser/ibm_new/sprint3/a_csv/SCAN_DATA_AIC_HW_INV_20210222.csv'
 csv_file = f'C:/project/feb24 _sample_file/Finalized Sample Data/Discovery Data/SCAN_DATA_AIC_HW_INV_20210222.csv'
 
 #pd.read_excel('CNDB_ACCOUNT_Records_20210303.xlsx')#, sheetname=0).to_csv('CNDB_ACCOUNT_Records_20210303.csv', index=False)
@@ -132,8 +127,21 @@ cols_final = [
                 'ServerVendor',
                 'ServerModel',
                 'Upload',
-                'Src'
+                'Src',
+                'ServerSocket',
+                'LastSuccessScan',
+                'SharedPoolCore'
             ]
+"""
+CREATE TABLE bridge.tbl_ibm_cedp_hw_inv_staging
+    "UpdatedOn","UpdatedBy","HostName","ComputerId","CndbId","ClusterCoresCount","ClusterName",
+    "ComputerType","DefaultPvuValue","NodeTotalProcessors","PartitionCores","ProcessorBrand",
+    "ProcessorBrandString","ProcessorModel","ProcessorType","ProcessorVendor","PvuPerCore",
+    "ServerCores","ServerId","ServerLogicalCores","ServerName","Status","SystemModel",
+    "Entitlement","IsCapped","IsSharedType","OnlineVpCount","SharedPoolId","ServerSerialNumber",
+    "ServerType","ServerVendor","ServerModel","Upload","Src","ServerSocket","LastSuccessScan","SharedPoolCore"
+
+"""
 #TODO -- cols_final - needs to come from CONFIG.ini
 
 df_load_staging = df_load_staging.reindex(columns=cols_final) # Satish Code - Reindex -  for mapping with the DB COLUMNS Ordering 
@@ -145,7 +153,8 @@ print("----df_load_staging.shape----------",df_load_staging.shape)
 print(df_load_staging.head(2))
 
 
-table_name = 'tbl_ibm_scan_data_aic_hw_ind_staging'
+# table_name = 'tbl_ibm_scan_data_aic_hw_ind_staging'
+table_name = 'bridge.tbl_ibm_cedp_hw_inv_staging'
 
 sql = "COPY " + table_name + " FROM STDIN DELIMITER \',\' CSV header;"
 cursor.copy_expert(sql, open(csv_load_staging))

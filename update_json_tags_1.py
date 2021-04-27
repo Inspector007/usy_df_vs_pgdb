@@ -2,12 +2,15 @@ import urllib.parse
 from sqlalchemy import create_engine
 import time
 
-db_user = urllib.parse.quote_plus("postgres")
-db_pass = urllib.parse.quote_plus("pgadmin")
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-conn = engine.raw_connection() ## # TODO connection pooling required
-cursor = conn.cursor() ## # TODO connection pooling required
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
+
+connection, cursor = data_source_connection(active_db)
 table_name = 'tbl_ibm_cndb_staging'
 """
 ['UpdatedOn', 'UpdatedBy', 'CndbTags', 'Source', 'AccountNumber', 'AccountTypeName', 'AmSwStatus', 
@@ -44,6 +47,11 @@ for i in range(25):
             '"SystemType" = \'{3}\'' \
             'where "UpdatedOn" IS NULL;'.format(UpdatedBy_list[i],CndbTags_list[i],Source_list[i],SystemType_list[i])
 
+
+
+sql_query = f'INSERT INTO tbl_bridge_ibm_segregated_paths_blob_storage('\
+    '"UpdatedOn", "UpdatedBy", "CndbId", "DataSource", "Data_source_file_1_path", "Data_source_file_2_path", "Data_source_file_3_path", "Data_source_file_4_path", "Data_source_file_5_path")'\
+    'VALUES ({}, {}, {}, {}, {}, {None}, {None}, {None}, {None});'
 cursor.execute(sql_query)
 conn.commit()
 cursor.close()

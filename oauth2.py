@@ -27,6 +27,7 @@ try:
         # File Downloading in main directory path
         downloading_path = file_mapped_folder(file_name)
         extension = file_name.split('.')[-1]
+        
         file_content = client.file(file_id).content()
         output_file = open(downloading_path + '/' + file_name, 'wb')
         client.file(file_id).download_to(output_file)

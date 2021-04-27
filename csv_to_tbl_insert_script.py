@@ -2,15 +2,16 @@ import urllib.parse
 from sqlalchemy import create_engine
 import time
 
-# db_user = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-# db_pass = urllib.parse.quote_plus("Devuser1@3")
-# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
-db_user = urllib.parse.quote_plus("postgres")
-db_pass = urllib.parse.quote_plus("pgadmin")
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-connection = engine.raw_connection() ## # TODO connection pooling required
-cursor = connection.cursor() ## # TODO connection pooling required
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
+
+connection, cursor = data_source_connection(active_db)
+
 filename = 'C:\project\Server_data_download\server_original\CNDB_ACCOUNT_Records_20210308_1.csv'
 filename_2 = 'C:\project\Server_data_download\server_small_df\CNDB_5_columns.csv'
 

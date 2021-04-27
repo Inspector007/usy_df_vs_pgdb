@@ -2,17 +2,15 @@ import urllib.parse
 from sqlalchemy import create_engine
 import time
 import pandas as pd
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-# db_user = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-# db_pass = urllib.parse.quote_plus("Devuser1@3")
-# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
 
-db_user = urllib.parse.quote_plus("postgres")
-db_pass = urllib.parse.quote_plus("pgadmin")
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
-
-connection = engine.raw_connection() ## # TODO connection pooling required
-cursor = connection.cursor() ## # TODO connection pooling required
+connection, cursor = data_source_connection(active_db)
 table_name = 'tbl_ibm_file_download_status'
 start_time_copy_expert = time.time()
 dict_data = {

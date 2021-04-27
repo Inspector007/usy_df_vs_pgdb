@@ -5,31 +5,15 @@ import pandas as pd
 import uuid
 import json
 
-"""tbl_ibm_cndb_staging Columns -->
-['UpdatedOn', 'UpdatedBy', 'CndbTags', 'Source', 'AccountNumber', 'AccountTypeName', 'AmSwStatus', 
-'ClientDirNumber', 'SystemType', 'CountryCode', 'Geogr
-aphyName', 'RegionName', 'IndustryName', 'SectorName', 'DpeContactEmail', 'DpeContactName']
- """
-# db_user_staging = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-# db_pass_staging = urllib.parse.quote_plus("Devuser1@3")
-# engine_staging = create_engine(f'postgresql+psycopg2://{db_user_staging}:{db_pass_staging}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
-# table_name_staging = 'tbl_ibm_cndb_staging'
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-"""tbl_accounts Columns -->
-['Id', 'UpdatedOn', 'UpdatedBy', 'IsDeleted', 'AccountNumber', 'AccountName', 'ClientDIRNumber', 
-'AccountStatus', 'AccountType', 'Geography', 'Country',
-'CountryCode', 'SectorName', 'IndustryName', 'DPEName', 'DPEEmailAddress', 'ServiceType', 'AccountTags']
- """
-# db_user_production = urllib.parse.quote_plus("postgres")
-# db_pass_production = urllib.parse.quote_plus("portaluser@8877")
-# engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atomsecurity_db?sslmode=', client_encoding='utf8' )
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
 
-
-
-db_user_production = urllib.parse.quote_plus("postgres")
-db_pass_production = urllib.parse.quote_plus("pgadmin")
-engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
-
+connection, cursor = data_source_connection(active_db)
 table_name_production = 'tbl_accounts'
 
 
@@ -40,9 +24,9 @@ myId = uuid.uuid4()
 
 
 def cndb_success_to_prod(df_data):
-	db_user_production = urllib.parse.quote_plus("postgres")
-	db_pass_production = urllib.parse.quote_plus("portaluser@8877")
-	engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atomsecurity_db?sslmode=', client_encoding='utf8' )
+	db_user_production = urllib.parse.quote_plus("")
+	db_pass_production = urllib.parse.quote_plus("")
+	engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@?sslmode=', client_encoding='utf8' )
 	table_name_production = 'tbl_accounts'
 
 

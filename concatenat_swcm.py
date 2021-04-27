@@ -3,18 +3,15 @@ from sqlalchemy import create_engine
 import pandas as pd
 import time
 
-### CT TEAM STAGIING DB 
-# db_user = urllib.parse.quote_plus("devuser1@usedadvsampql01")
-# db_pass = urllib.parse.quote_plus("Devuser1@3")
-# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-### DEEPAK LAPTOP DB 
-# db_user = urllib.parse.quote_plus("postgres")
-# db_pass = urllib.parse.quote_plus("pgadmin")
-# engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
 
-# connection = engine.raw_connection() #TODO connection pooling required
-# cursor = connection.cursor() #TODO connection pooling required
+connection, cursor = data_source_connection(active_db)
 
 #SwCM_Entitlement_20210223.xlsx #TODO CHange to xlsx and code again with 
 csv_file = '/home/vcenteruser/ibm_new/sprint3/a_csv/SwCM_Entitlement_20210223.csv'

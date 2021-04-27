@@ -14,40 +14,43 @@ import numpy as np
 # db_pass_staging = urllib.parse.quote_plus("Devuser1@3")
 # engine_staging = create_engine(f'postgresql+psycopg2://{db_user_staging}:{db_pass_staging}@usedadvsampql01.postgres.database.azure.com:5432/ey_atombridge_db?sslmode=require', client_encoding='utf8' )
 
-# db_user = urllib.parse.quote_plus("postgres")
-# db_pass = urllib.parse.quote_plus("pgadmin")
-# engine_staging = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+
+db_user = urllib.parse.quote_plus("postgres")
+db_pass = urllib.parse.quote_plus("pgadmin")
+engine_staging = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
 
 #table_name_staging = 'tbl_ibm_mldb_staging'
-tbl_name_cndb = 'tbl_ibm_cndb_staging'
+tbl_name_cndb = 'tbl_bridge_ibm_cndb_staging'
 #tbl_name_mldb = 'tbl_ibm_mldb_staging'
-tbl_fail = 'tbl_ibm_source_data_failures_staging'
+tbl_fail = 'tbl_bridge_ibm_source_data_failures_staging'
 
-db_user_production = urllib.parse.quote_plus("postgres")
-db_pass_production = urllib.parse.quote_plus("portaluser@8877")
+db_user_production = urllib.parse.quote_plus("")
+db_pass_production = urllib.parse.quote_plus("")
 #engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atomdeployment_db?sslmode=', client_encoding='utf8' )
-engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+# engine_staging = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atombridge_db_2?sslmode=', client_encoding='utf8' )
 
 connection = engine_production.raw_connection() #TODO connection pooling required
 cursor = connection.cursor() #TODO connection pooling required
 
+
+connection_staging = engine_staging.raw_connection() #TODO connection pooling required
+cursor_staging = connection_staging.cursor() #TODO connection pooling required
+
 start_time_copy_expert = time.time()
 # df_cndb = pd.read_sql_table(tbl_name_cndb, con=engine_staging)
 # select * from public.tbl_it_asset_baseline WHERE "ITTags"->>'AssetDesignation'='Designation1'
-df_cndb_inprocess = pd.read_sql_query('select * from '+tbl_name_cndb+' WHERE \"CndbTags\"->>\'1TF\'=\'Inprocess\'', con=engine_production)
+df_cndb_inprocess = pd.read_sql_query('select * from '+tbl_name_cndb+' WHERE \"CndbTags\"->>\'1TF\'=\'Inprocess\'', con=engine_staging)
 #df_fail = pd.read_sql_query('select * from '+tbl_fail,con=engine_staging)
 # import pdb;pdb.set_trace()
 df_fail = pd.DataFrame()
 #df_mldb = pd.read_sql_table(tbl_name_mldb, con=engine_staging)
 print("----cndb_actual_df.shape----",df_cndb_inprocess.shape)
 
-
-
-
 def cndb_success_to_prod(df_data):
-    db_user_production = urllib.parse.quote_plus("postgres")
-    db_pass_production = urllib.parse.quote_plus("portaluser@8877")
-    engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@atomclient.westcentralus.cloudapp.azure.com:5432/ibm_atomsecurity_db?sslmode=', client_encoding='utf8' )
+    db_user_production = urllib.parse.quote_plus("")
+    db_pass_production = urllib.parse.quote_plus("")
+    engine_production = create_engine(f'postgresql+psycopg2://{db_user_production}:{db_pass_production}@?sslmode=', client_encoding='utf8' )
     table_name_production = 'tbl_accounts'
 
 
@@ -74,6 +77,7 @@ def cndb_success_to_prod(df_data):
     'IndustryName' : df_data['IndustryName'].tolist(),
     'SectorName' : df_data['SectorName'].tolist(),
     }
+
     df_data_AccountTags = pd.DataFrame.from_dict(dict_AccountTags)
     AccountTags_Jsonb = df_data_AccountTags.to_json(orient='records',lines=True)
     AccountTags_list = []
@@ -131,14 +135,14 @@ def get_indexFailure_Row(df_cndb_vald_AccNumVald):
 
     # final_col = pd.concat(df_cndb_inprocess, df_fail_accountNum).drop_duplicates(keep=False)
     df_success = df_cndb_inprocess[~df_cndb_inprocess.index.isin(df_fail_accountNum.index)]
-
+    import pdb;pdb.set_trace()
 
     cndb_success_to_prod(df_success)
 
     sql_query= ""
-    sql_query = 'UPDATE tbl_ibm_cndb_staging set "CndbTags" = \'{"1TF":"Processed"}\' where \"CndbTags\"->>\'1TF\'=\'Inprocess\';'
+    sql_query = 'UPDATE tbl_bridge_ibm_cndb_staging set "CndbTags" = \'{"1TF":"Processed"}\' where \"CndbTags\"->>\'1TF\'=\'Inprocess\';'
 
-    cursor.execute(sql_query)
+    cursor_staging.execute(sql_query)
     
     df_fail["UpdatedOn"] = df_fail_accountNum["UpdatedOn"]
     df_fail["UpdatedBy"] = df_fail_accountNum["UpdatedBy"]
@@ -161,6 +165,8 @@ def get_indexFailure_Row(df_cndb_vald_AccNumVald):
         df_fail.to_sql(tbl_fail, con=engine_production, if_exists='append', index=False) #connection
         connection.commit()
         cursor.close()
+        connection_staging.commit()
+        cursor_staging.close()
     except Exception as err_copy_data_staging:
         print("-----err_copy_data_staging-----",err_copy_data_staging)  
 

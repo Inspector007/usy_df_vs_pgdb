@@ -3,12 +3,15 @@ from sqlalchemy import create_engine
 import time
 import pandas as pd
 import json
-db_user = urllib.parse.quote_plus("postgres")
-db_pass = urllib.parse.quote_plus("pgadmin")
-engine = create_engine(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/ibm_atombridge_db?sslmode=', client_encoding='utf8' )
+from settings import read_config_file, CONFIGS_PATH, PROJECT_PATH
+from utils import *
+"""
+"""
 
-conn = engine.raw_connection() ## # TODO connection pooling required
-cursor = conn.cursor() ## # TODO connection pooling required
+config_data = read_config_file(CONFIGS_PATH)
+active_db = config_data['db_environment'][config_data['active_db_env']]['atom_core_db']
+
+connection, cursor = data_source_connection(active_db)
 table_name = 'tbl_ibm_cndb_staging'
 """
 ['UpdatedOn', 'UpdatedBy', 'CndbTags', 'Source', 'AccountNumber', 'AccountTypeName', 'AmSwStatus', 
